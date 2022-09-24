@@ -6,6 +6,7 @@ from typing import Optional
 
 IndexFn = namedtuple('IndexFn', 'get add')
 
+
 class IndexStatus(Enum):
     ready = "ready"
     failed = "failed"
@@ -13,7 +14,7 @@ class IndexStatus(Enum):
 
 def Index(data_dir: Path) -> IndexFn:
     index_file = (data_dir / ".index").absolute()
-    
+
     db = dbm.open(str(index_file), 'c')
 
     # Check if video with specified id already in index
@@ -26,5 +27,5 @@ def Index(data_dir: Path) -> IndexFn:
     # Adds video with specified id to index
     def add(id: str, status: IndexStatus):
         db[id] = status.value
-            
+
     return IndexFn(get=get, add=add)
