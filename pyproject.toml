@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "ytm-ll-dl"
+version = "0.1.0"
+description = "Download 'Liked music' playlist from Youtube Music"
+authors = ["kotborealis <kotborealis@awooo.ru>"]
+readme = "README.md"
+packages = [{include = "ytm_ll_dl"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+yt-dlp = "^2022.9.1"
+sh = "^1.14.3"
+ytmusicapi = "^0.22.0"
+click = "^8.1.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
