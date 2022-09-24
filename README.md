@@ -1,4 +1,4 @@
-# ytm-ll-dl
+# 💽 ytm-ll-dl
 
 Python app to download 'Liked music' playlist from Youtube Music.
 
