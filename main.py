@@ -5,7 +5,7 @@ from sh import cd, ErrorReturnCode
 from ytmusicapi import YTMusic
 
 from slugify import slugify
-from index_helpers import Index
+from index_helpers import Index, IndexStatus
 from bash import bash
 import click
 
@@ -82,8 +82,9 @@ def main(
             mp3_tmp = ".tmp.mp3"
             mp3_tmp2 = ".tmp2.mp3"
             
-            if index.has(id):
-                log(f"Video {mp3} already in index, skipping...")
+            status = index.get(id)
+            if status is not None:
+                log(f"Video {mp3} already in index ({status.value}), skipping...")
                 continue
             else:
                 log(f"Downloading {mp3}...")
@@ -99,6 +100,7 @@ def main(
             except ErrorReturnCode as e:
                 log("yt-dlp failed")
                 log(e)
+                index.add(id, IndexStatus.failed)
                 continue
         
 
@@ -136,7 +138,7 @@ def main(
             bash(f"rm '{thumbnail}'")
             bash(f"mv {mp3_tmp2} '{mp3}'")
             
-            index.add(id)
+            index.add(id, IndexStatus.ready)
 
 
 if __name__ == '__main__':

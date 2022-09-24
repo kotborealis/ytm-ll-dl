@@ -1,34 +1,32 @@
+from enum import Enum
 from pathlib import Path
-import json
+import dbm
 from collections import namedtuple
+from typing import Optional
 
 from bash import bash
 
-IndexFn = namedtuple('IndexFn', 'has add')
+IndexFn = namedtuple('IndexFn', 'get add')
+
+class IndexStatus(Enum):
+    ready = "ready"
+    failed = "failed"
 
 
 def Index(data_dir: Path) -> IndexFn:
-    index_file = (data_dir / ".index.json").absolute()
+    index_file = (data_dir / ".index").absolute()
     
-    # Check and create index file
-    if not index_file.exists():
-        bash(f"echo '[]' > {str(index_file)}")
+    db = dbm.open(str(index_file), 'c')
 
     # Check if video with specified id already in index
-    def index_has(id: str) -> bool:
-        with open(str(index_file), "r") as indexfile:
-            index = json.load(indexfile)
-        return id in index
+    def get(id: str) -> Optional[IndexStatus]:
+        if id.encode() not in db.keys():
+            return None
 
+        return IndexStatus[db[id].decode()]
 
     # Adds video with specified id to index
-    def index_add(id: str):
-        with open(str(index_file), "r") as indexfile:
-            index = json.load(indexfile)
-
-        index.append(id)
-
-        with open(str(index_file), "w") as indexfile:
-            json.dump(index, indexfile)
+    def add(id: str, status: IndexStatus):
+        db[id] = status.value
             
-    return IndexFn(has=index_has, add=index_add)
+    return IndexFn(get=get, add=add)
