@@ -1,28 +1,34 @@
 from pathlib import Path
 import json
+from collections import namedtuple
 
 from bash import bash
-from constants import DATA_DIRECTORY
 
-INDEX_FILE = str(Path(f"{DATA_DIRECTORY}/.index.json").absolute())
-
-# Check and create index file
-if not Path(INDEX_FILE).exists():
-    bash(f"echo '[]' > {INDEX_FILE}")
-
-# Check if video with specified id already in index
-def index_has(id: str) -> bool:
-    with open(INDEX_FILE, "r") as indexfile:
-        index = json.load(indexfile)
-    return id in index
+IndexFn = namedtuple('IndexFn', 'has add')
 
 
-# Adds video with specified id to index
-def index_add(id: str):
-    with open(INDEX_FILE, "r") as indexfile:
-        index = json.load(indexfile)
+def Index(data_dir: Path) -> IndexFn:
+    index_file = (data_dir / ".index.json").absolute()
+    
+    # Check and create index file
+    if not index_file.exists():
+        bash(f"echo '[]' > {str(index_file)}")
 
-    index.append(id)
+    # Check if video with specified id already in index
+    def index_has(id: str) -> bool:
+        with open(str(index_file), "r") as indexfile:
+            index = json.load(indexfile)
+        return id in index
 
-    with open(INDEX_FILE, "w") as indexfile:
-        json.dump(index, indexfile)
+
+    # Adds video with specified id to index
+    def index_add(id: str):
+        with open(str(index_file), "r") as indexfile:
+            index = json.load(indexfile)
+
+        index.append(id)
+
+        with open(str(index_file), "w") as indexfile:
+            json.dump(index, indexfile)
+            
+    return IndexFn(has=index_has, add=index_add)
