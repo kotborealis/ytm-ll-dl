@@ -23,9 +23,16 @@ import click
     type=int,
     help='Number of tracks to get from the top.'
 )
+@click.option(
+    '--skip',
+    default=0,
+    type=int,
+    help='Skip tracks from the bottom.'
+)
 def main(
     output: Path,
-    limit: int
+    limit: int,
+    skip: int
 ):
     """Download liked music from YTM"""
     
@@ -56,6 +63,11 @@ def main(
     i = 0
     for track in reversed(tracks):
         i += 1
+        
+        if skip > 0:
+            skip -= 1
+            continue
+
         with cd(data_dir):
             prefix = f"[{i}/{len(tracks)}] "
             log = lambda x: print(prefix + str(x))
