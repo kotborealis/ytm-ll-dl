@@ -89,7 +89,8 @@ def main(
             else:
                 log(f"Downloading {mp3}...")
                 
-            bash(f"rm -f '{mp3}' '{mp3_tmp}' '{mp3_tmp2}'")
+            for file in [mp3, mp3_tmp, mp3_tmp2]:
+                Path(file).unlink(missing_ok=True)
             
             try:
                 output = bash(
@@ -123,8 +124,7 @@ def main(
             artist = re.sub('`', '\\`', artist)
             album = re.sub('`', '\\`', album) if album else None
             
-            
-            a = (
+            bash(
                 f"ffmpeg -y -i '{mp3_tmp}' -i {thumbnail} " +
                 "-map 0:0 -map 1:0 -c copy -id3v2_version 3 -metadata:s:v " +
                 "title=\"Album cover\" -metadata:s:v comment=\"Cover (front)\" " +
@@ -133,10 +133,9 @@ def main(
                 (f"-metadata album=\"{album}\" " if album else " ") +
                 f"-c:a libmp3lame {mp3_tmp2}"
             )
-            print(a)
-            bash(a)
-            bash(f"rm '{thumbnail}'")
-            bash(f"mv {mp3_tmp2} '{mp3}'")
+            
+            Path(thumbnail).unlink(missing_ok=True)
+            Path(mp3_tmp2).rename(mp3)
             
             index.add(id, IndexStatus.ready)
 
