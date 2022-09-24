@@ -4,8 +4,6 @@ import dbm
 from collections import namedtuple
 from typing import Optional
 
-from bash import bash
-
 IndexFn = namedtuple('IndexFn', 'get add')
 
 class IndexStatus(Enum):

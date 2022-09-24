@@ -4,9 +4,9 @@ import re
 from sh import cd, ErrorReturnCode
 from ytmusicapi import YTMusic
 
-from slugify import slugify
-from index_helpers import Index, IndexStatus
-from bash import bash
+from ytm_ll_dl.slugify import slugify
+from ytm_ll_dl.index_helpers import Index, IndexStatus
+from ytm_ll_dl.bash import bash
 import click
 
 
