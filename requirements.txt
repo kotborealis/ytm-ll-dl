@@ -1,3 +1,0 @@
-ytmusicapi
-yt-dlp
-sh
