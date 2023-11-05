@@ -75,8 +75,10 @@ def main(
                 print(prefix + str(x))
 
             id = track['videoId']
+            artist = "Unknown Artist"
 
-            artist = track['artists'][0]['name']
+            if track['artists'] and len(track['artists']) > 0:
+                artist = track['artists'][0]['name']
             title = track['title']
             album = track['album']['name'] if track['album'] else None
 
